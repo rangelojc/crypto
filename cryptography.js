@@ -103,6 +103,16 @@ function _decrypt(ciphertext, key) {
     return Buffer.concat([decipher.update(encrypted), decipher.final()]);
 }
 
+
+/**
+    @param {Buffer} bffr - containing the Buffer value
+
+    Clears supplied buffer from memory (untested)
+**/
+function clearBuffer(bffr) {
+    bffr.fill(0);
+}
+
 /**
 Implementation functions encrypt() and decrypt().
 
@@ -112,7 +122,7 @@ Parameters:
         @param {String} message = message to be encrypted
 
     decrypt()
-        @param {String} rawplainkey = global key in base64 string format
+        @param {String} plainkey = global key in base64 string format
         @param {String:Base64} rawcipher = encrypted message to be decrypted
 **/
 
@@ -140,15 +150,6 @@ function decrypt(plainkey, rawcipher) {
     const content = bffr.toString('utf8');
 
     return { content, buffer: bffr }
-}
-
-/**
-    @param {Buffer} bffr - containing the Buffer value
-
-    Clears supplied buffer from memory (untested)
-**/
-function clearBuffer(bffr) {
-    bffr.fill(0);
 }
 
 /*
