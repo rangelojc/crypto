@@ -114,16 +114,14 @@ function clearBuffer(bffr) {
 }
 
 /**
-Implementation functions encrypt() and decrypt().
-
 Parameters:
-    encrypt()
-        @param {String} plainkey = global key in base64 string format
-        @param {String} message = message to be encrypted
+    @param {String} plainkey = global key string in base64 format
+    @param {String} message = message to be encrypted
 
-    decrypt()
-        @param {String} plainkey = global key in base64 string format
-        @param {String:Base64} rawcipher = encrypted message to be decrypted
+Output:
+    @property {String:Base64} content = encrypted message in base64 format
+    @property {Buffer} buffer = buffer value to clear
+    @property {String:Base64} content = salt string in base64 format
 **/
 
 function encrypt(plainkey, message) {
@@ -136,16 +134,27 @@ function encrypt(plainkey, message) {
     const content = bffr.toString('base64');
     const saltstr = salt.toString('base64');
 
-    return { content: saltstr + "$$$" + content, buffer: bffr };
+    return { salt: saltstr, content: content, buffer: bffr };
 }
 
-function decrypt(plainkey, rawcipher) {
+/**
+Parameters: 
+    @param {String} plainkey = global key string in base64 format
+    @param {String:Base64} rawcipher = encrypted message to be decrypted in base64 format
+    @param {String:Base64} salt = salt string in base64 format
+
+Output:
+    @property {String} content = decrypted message
+    @property {Buffer} buffer = buffer value to clear
+**/
+
+function decrypt(plainkey, rawcipher, salt) {
     const bufferplainkey = Buffer.from(Buffer.from(plainkey, 'base64').toString('ascii'));
-    const salt = Buffer.from(rawcipher.split("$$$")[0], 'base64');
+    const salt = Buffer.from(salt, 'base64');
     const key = getKeyFromPassword(bufferplainkey, salt);
     // console.log(salt, plainkey, bufferplainkey, key);
 
-    const cipher = Buffer.from(rawcipher.split("$$$")[1], 'base64');
+    const cipher = Buffer.from(rawcipher, 'base64');
     const bffr = _decrypt(cipher, key);
     const content = bffr.toString('utf8');
 
